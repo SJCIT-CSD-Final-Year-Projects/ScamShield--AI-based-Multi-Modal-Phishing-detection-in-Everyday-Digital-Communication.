@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScamShield - Digital Safety Helper</title>
+
+    <style>
+        :root {
+            --base-size: 16px;
+            --navy: #102a56;
+            --blue: #1769aa;
+            --light-blue: #eaf4ff;
+            --green: #16834b;
+            --green-bg: #eaf8f0;
+            --red: #c62828;
+            --red-bg: #fff0f0;
+            --orange: #c77700;
+            --orange-bg: #fff7e8;
+            --purple: #6842c2;
+            --purple-bg: #f3efff;
+            --text: #172033;
+            --muted: #687386;
+            --white: #ffffff;
+            --page: #f4f7fb;
+            --border: #dfe6ef;
+            --shadow: 0 8px 24px rgba(16,42,86,0.08);
+            --radius: 18px;
+        }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            background: var(--page);
+            color: var(--text);
+            font-family: Inter, system-ui, Arial, sans-serif;
+            font-size: var(--base-size);
+            line-height: 1.4;
+        }
+
+        button, input, select, textarea { font: inherit; }
+        button { cursor: pointer; }
+
+        .topbar {
+            background: linear-gradient(135deg,#102a56,#1769aa 60%,#2186c9);
+            color: white;
+            padding: 14px 20px;
+            box-shadow: 0 4px 16px rgba(16,42,86,.18);
+        }
+
+        .topbar-inner {
+            max-width: 1450px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 250px;
+        }
+
+        .brand-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            background: rgba(255,255,255,.16);
+            border: 1px solid rgba(255,255,255,.25);
+            font-size: 25px;
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-size: clamp(20px,2vw,28px);
+            line-height: 1.1;
+        }
+
+        .brand p { margin: 3px 0 0; opacity: .88; font-size: 13px; }
+
+        .top-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .control-box {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,.12);
+            padding: 5px 8px;
+            border-radius: 10px;
+        }
+
+        .control-box label { font-size: 12px; }
+
+        .control-box select {
+            border: 0;
+            background: white;
+            color: var(--text);
+            padding: 5px 7px;
+            border-radius: 7px;
+            font-size: 13px;
+        }
+
+        .page {
+            width: min(1450px,calc(100% - 28px));
+            margin: 14px auto 20px;
+        }
+
+        .welcome {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 15px 18px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .welcome-text { display: flex; align-items: center; gap: 13px; }
+
+        .welcome-icon {
+            width: 42px;
+            height: 42px;
+            flex: 0 0 42px;
+            display: grid;
+            place-items: center;
+            background: var(--green-bg);
+            border-radius: 12px;
+            font-size: 22px;
+        }
+
+        .welcome h2 { margin: 0 0 3px; font-size: 18px; }
+        .welcome p { margin: 0; color: var(--muted); font-size: 13px; }
+
+        .security-badge {
+            white-space: nowrap;
+            padding: 7px 11px;
+            border-radius: 999px;
+            background: var(--green-bg);
+            color: var(--green);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(4,minmax(0,1fr));
+            gap: 12px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 15px;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .card.span-2 { grid-column: span 2; }
+        .card.span-3 { grid-column: span 3; }
+        .card.span-4 { grid-column: span 4; }
+
+        .card-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .card-icon {
+            width: 38px;
+            height: 38px;
+            flex: 0 0 38px;
+            display: grid;
+            place-items: center;
+            border-radius: 11px;
+            background: var(--light-blue);
+            font-size: 19px;
+        }
+
+        .card-title { min-width: 0; }
+        .card-title h2 { margin: 0; font-size: 16px; line-height: 1.2; }
+        .card-title p { margin: 2px 0 0; color: var(--muted); font-size: 11px; }
+
+        .input, textarea, input[type="tel"], input[type="url"],
+        input[type="text"], input[type="file"] {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fbfcfe;
+            color: var(--text);
+            padding: 9px 10px;
+            outline: none;
+            transition: .18s;
+        }
+
+        textarea { min-height: 70px; resize: vertical; }
+
+        .input:focus, textarea:focus, input:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(23,105,170,.10);
+            background: white;
+        }
+
+        input[type="file"] { padding: 7px; font-size: 12px; }
+
+        .form-row { display: flex; gap: 7px; }
+        .form-row > * { flex: 1; min-width: 0; }
+
+        .btn {
+            border: 0;
+            border-radius: 10px;
+            padding: 9px 12px;
+            font-weight: 700;
+            font-size: 12px;
+            transition: transform .15s, box-shadow .15s, opacity .15s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn:hover { transform: translateY(-1px); }
+        .btn:active { transform: translateY(0); }
+        .btn-primary { background: var(--blue); color: white; }
+        .btn-success { background: var(--green); color: white; }
+        .btn-danger { background: var(--red); color: white; }
+        .btn-warning { background: var(--orange); color: white; }
+        .btn-purple { background: var(--purple); color: white; }
+        .btn-light { background: #eef3f8; color: var(--text); }
+        .btn-outline { background: white; color: var(--blue); border: 1px solid #bdd4e8; }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(2,minmax(0,1fr));
+            gap: 7px;
+        }
+
+        .button-grid.three { grid-template-columns: repeat(3,minmax(0,1fr)); }
+
+        .voice-card { background: linear-gradient(145deg,#f5f1ff,#fff); }
+
+        .voice-controls {
+            display: grid;
+            grid-template-columns: repeat(2,minmax(0,1fr));
+            gap: 7px;
+            margin-bottom: 8px;
+        }
+
+        .followups {
+            display: grid;
+            grid-template-columns: repeat(3,minmax(0,1fr));
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .followup {
+            border: 1px solid #d9d0f5;
+            background: #faf8ff;
+            color: #5636a6;
+            border-radius: 9px;
+            padding: 7px 5px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .result {
+            display: none;
+            margin-top: 9px;
+            border-radius: 11px;
+            border: 1px solid var(--border);
+            background: #f8fafc;
+            padding: 10px;
+            font-size: 12px;
+            overflow-wrap: anywhere;
+        }
+
+        .result.show { display: block; }
+
+        .result img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 9px;
+            margin-top: 7px;
+            display: block;
+        }
+
+        .result iframe {
+            width: 100%;
+            height: 230px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: white;
+            margin-top: 8px;
+        }
+
+        .result h3, .result h4 { margin-top: 0; }
+        .result button { margin-top: 6px; }
+        .result a { color: var(--blue); font-weight: 700; }
+
+        .loading { display: inline-flex; align-items: center; gap: 7px; }
+
+        .spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid #d7e0ea;
+            border-top-color: var(--blue);
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .checks {
+            display: grid;
+            grid-template-columns: repeat(2,minmax(0,1fr));
+            gap: 6px;
+            margin: 7px 0;
+        }
+
+        .check {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            padding: 7px;
+            font-size: 11px;
+        }
+
+        .check input { width: 16px; height: 16px; accent-color: var(--blue); }
+
+        .report-actions {
+            display: grid;
+            grid-template-columns: repeat(2,minmax(0,1fr));
+            gap: 7px;
+        }
+
+        .download-box { margin-top: 8px; display: none; }
+        .download-box.show { display: block; }
+
+        .show-content {
+            display: grid;
+            grid-template-columns: repeat(3,minmax(0,1fr));
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .show-content button {
+            border: 1px dashed #b7c8da;
+            background: #f8fbfe;
+            color: var(--blue);
+            padding: 7px 5px;
+            border-radius: 9px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .footer {
+            margin-top: 12px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .footer-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 13px 15px;
+            box-shadow: var(--shadow);
+        }
+
+        .footer-card h3 { margin: 0 0 4px; font-size: 14px; }
+        .footer-card p { margin: 0; color: var(--muted); font-size: 11px; }
+        .help-buttons { display: flex; gap: 6px; margin-top: 8px; }
+
+        /* Improved video/photo result readability */
+        #videoResult, #photoResult, #imageResult, #linkResult,
+        #clickedResult, #voiceResult, #phoneResult, #messageResult {
+            width: 100%;
+            max-width: 100%;
+            overflow-wrap: anywhere;
+        }
+
+        #videoResult img, #photoResult img {
+            width: 100%;
+            max-width: 520px;
+            max-height: 520px;
+            object-fit: contain;
+            margin: 10px auto;
+            background: white;
+            border: 2px solid var(--border);
+        }
+
+        .photo-comparison {
+            display: grid;
+            grid-template-columns: repeat(2,minmax(0,1fr));
+            gap: 12px;
+        }
+
+        .photo-comparison img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            border: 3px solid var(--border);
+            border-radius: 10px;
+        }
+
+        .alert-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: white;
+            font-size: 12px;
+        }
+
+        @media (min-width: 1200px) and (min-height: 700px) {
+            .page { margin-top: 12px; }
+            .card { padding: 13px; }
+            .welcome { padding: 12px 16px; }
+            .result iframe { height: 230px; }
+            textarea { min-height: 58px; }
+        }
+
+        @media (max-width: 1050px) {
+            .dashboard { grid-template-columns: repeat(2,minmax(0,1fr)); }
+            .card.span-3, .card.span-4 { grid-column: span 2; }
+            .topbar-inner { align-items: flex-start; }
+        }
+
+        @media (max-width: 650px) {
+            .topbar-inner { flex-direction: column; }
+            .top-controls { width: 100%; justify-content: flex-start; }
+            .page { width: calc(100% - 16px); margin-top: 8px; }
+            .welcome { align-items: flex-start; flex-direction: column; }
+            .dashboard { grid-template-columns: 1fr; }
+            .card, .card.span-2, .card.span-3, .card.span-4 { grid-column: span 1; }
+            .footer { grid-template-columns: 1fr; }
+            .followups, .show-content { grid-template-columns: repeat(2,minmax(0,1fr)); }
+            .checks, .photo-comparison { grid-template-columns: 1fr; }
+        }
+
+        body.large-text .card-title h2 { font-size: 18px; }
+        body.large-text .btn,
+        body.large-text input,
+        body.large-text textarea { font-size: calc(var(--base-size) * .85); }
+
+        @media print {
+            .topbar { box-shadow: none; }
+            .btn, input, textarea, select { display: none !important; }
+            body { background: white; }
+            .card, .welcome, .footer-card { box-shadow: none; }
+        }
+
+        /* ---------- additions: text size scaling, tip banner, focus ---------- */
+
+        .card-title h2 { font-size: calc(var(--base-size) * 1); }
+        .card-title p, .footer-card p { font-size: calc(var(--base-size) * .7); }
+        .btn, .result, .check, .followup, .show-content button,
+        input[type="file"] { font-size: calc(var(--base-size) * .75); }
+        input[type="text"], input[type="tel"], input[type="url"], textarea {
+            font-size: calc(var(--base-size) * .85);
+        }
+        .footer-card h3 { font-size: calc(var(--base-size) * .9); }
+        .welcome h2 { font-size: calc(var(--base-size) * 1.1); }
+        .welcome p { font-size: calc(var(--base-size) * .8); }
+
+        body.large-text .dashboard { grid-template-columns: 1fr; }
+        body.large-text .card,
+        body.large-text .card.span-2,
+        body.large-text .card.span-3,
+        body.large-text .card.span-4 { grid-column: span 1; }
+        body.large-text .footer { grid-template-columns: 1fr; }
+        body.large-text .followups,
+        body.large-text .show-content,
+        body.large-text .checks,
+        body.large-text .voice-controls,
+        body.large-text .button-grid { grid-template-columns: 1fr; }
+
+        .tip {
+            background: var(--orange-bg);
+            border: 1px solid #f3d9a4;
+            color: #7a4a00;
+            border-radius: var(--radius);
+            padding: 10px 16px;
+            margin-bottom: 12px;
+            font-weight: 700;
+            font-size: calc(var(--base-size) * .85);
+        }
+
+        .pre { white-space: pre-wrap; line-height: 1.6; }
+
+        a.btn, a.btn:visited { color: inherit; }
+        a.btn-danger, a.btn-primary, a.btn-success { color: white; }
+        a.btn-outline { color: var(--blue); }
+
+        button:focus-visible, a:focus-visible, select:focus-visible {
+            outline: 3px solid #ffb300;
+            outline-offset: 2px;
+        }
+
+        .stack > * + * { margin-top: 6px; }
+    </style>
+</head>
+
+<body>
+
+<header class="topbar">
+    <div class="topbar-inner">
+        <div class="brand">
+            <div class="brand-icon">🛡️</div>
+            <div>
+                <h1>ScamShield</h1>
+                <p>Your Digital Safety Helper</p>
+            </div>
+        </div>
+
+        <div class="top-controls">
+            <div class="control-box">
+                <label for="languageSelect">🌐 Language</label>
+                <select id="languageSelect" onchange="changeLanguage()">
+                    <option value="en-IN">English</option>
+                    <option value="kn-IN">ಕನ್ನಡ</option>
+                    <option value="te-IN">తెలుగు</option>
+                    <option value="hi-IN">हिन्दी</option>
+                </select>
+            </div>
+
+            <div class="control-box">
+                <label for="sizeSelect">🔠 Text size</label>
+                <select id="sizeSelect" onchange="changeSize()">
+                    <option value="16">16</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                    <option value="40">40</option>
+                    <option value="50">50</option>
+                </select>
+            </div>
+
+            <div class="control-box">
+                <label class="alert-toggle">
+                    <input type="checkbox" id="alertSound" checked>
+                    🔊 Warning sound
+                </label>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="page">
+
+    <section class="welcome">
+        <div class="welcome-text">
+            <div class="welcome-icon">👋</div>
+            <div>
+                <h2>Welcome! Not sure if something is a scam?</h2>
+                <p>Tell me, paste it, or show me. I will explain it in simple words.</p>
+            </div>
+        </div>
+        <div class="security-badge">🔒 ScamShield never submits anything for you</div>
+    </section>
+
+    <div class="tip" id="tipBanner">⚠️ Never share your OTP, PIN, CVV or password with anyone - not even the bank.</div>
+
+    <section class="dashboard">
+
+        <!-- ========== VOICE ========== -->
+        <article class="card span-2 voice-card">
+            <div class="card-head">
+                <div class="card-icon">🎤</div>
+                <div class="card-title">
+                    <h2>Talk to ScamShield</h2>
+                    <p>Speak or type what happened</p>
+                </div>
+            </div>
+
+            <div class="voice-controls">
+                <button class="btn btn-purple" id="micButton" type="button" onclick="startListening()">🎤 Talk to ScamShield</button>
+                <button class="btn btn-outline" type="button" onclick="speakAnswer()">🔈 Speak Answer</button>
+            </div>
+
+            <textarea id="voiceText" aria-label="What happened" placeholder="Tell me what happened..."></textarea>
+
+            <div class="form-row" style="margin-top:7px">
+                <button class="btn btn-primary" type="button" onclick="analyzeVoice()">🔎 Analyze What I Said</button>
+            </div>
+
+            <div class="followups" id="followups"></div>
+
+            <div class="show-content">
+                <button type="button" onclick="goTo('linkCard')">🔗 Show a link</button>
+                <button type="button" onclick="goTo('imageCard')">🖼️ Show an image</button>
+                <button type="button" onclick="goTo('videoCard')">🎬 Show a video</button>
+            </div>
+
+            <div id="voiceResult" class="result" aria-live="polite"></div>
+        </article>
+
+        <!-- ========== CHECK MESSAGE ========== -->
+        <article class="card span-2" id="messageCard">
+            <div class="card-head">
+                <div class="card-icon">💬</div>
+                <div class="card-title">
+                    <h2>Check a Message</h2>
+                    <p>Paste an SMS or WhatsApp message</p>
+                </div>
+            </div>
+            <textarea id="messageText" aria-label="Message to check" placeholder="Paste the message here..."></textarea>
+            <div class="form-row" style="margin-top:7px">
+                <button class="btn btn-primary" type="button" onclick="checkMessage()">🔍 Check Message</button>
+                <button class="btn btn-light" type="button" onclick="clearMessage()">Clear</button>
+            </div>
+            <div id="messageResult" class="result" aria-live="polite"></div>
+        </article>
+
+        <!-- ========== CHECK LINK ========== -->
+        <article class="card" id="linkCard">
+            <div class="card-head">
+                <div class="card-icon">🔗</div>
+                <div class="card-title">
+                    <h2>Check Link</h2>
+                    <p>Safely inspect a website</p>
+                </div>
+            </div>
+            <input type="url" id="linkInput" aria-label="Link" placeholder="Paste a link here" onkeydown="if(event.key==='Enter')checkLink()">
+            <p style="color:var(--muted);font-size:11px;margin:6px 0 0">Investigates URL parts, available page signals, and redirect observations. It will not open the link in your browser.</p>
+            <div class="form-row" style="margin-top:7px">
+                <button class="btn btn-primary" type="button" onclick="checkLink()">🔍 Check Link</button>
+            </div>
+            <div id="linkResult" class="result" aria-live="polite"></div>
+        </article>
+
+        <!-- ========== ANALYZE IMAGE ========== -->
+        <article class="card" id="imageCard">
+            <div class="card-head">
+                <div class="card-icon">🖼️</div>
+                <div class="card-title">
+                    <h2>Analyze Image</h2>
+                    <p>Screenshots, QR codes, messages</p>
+                </div>
+            </div>
+            <input type="file" id="imageInput" accept="image/*" aria-label="Choose an image">
+            <p style="color:var(--muted);font-size:11px;margin:6px 0 0">Highlights text patterns and QR codes. It does not prove authenticity or detect deepfakes.</p>
+            <div id="imageLocalPreview" class="result" aria-live="polite"></div>
+            <div class="form-row" style="margin-top:7px">
+                <button class="btn btn-primary" type="button" onclick="analyzeImage()">🔍 Analyze Image</button>
+            </div>
+            <div id="imageResult" class="result" aria-live="polite"></div>
+        </article>
+
+        <!-- ========== ANALYZE VIDEO ========== -->
+        <article class="card" id="videoCard">
+            <div class="card-head">
+                <div class="card-icon">🎬</div>
+                <div class="card-title">
+                    <h2>Analyze Video</h2>
+                    <p>Up to 5 minutes</p>
+                </div>
+            </div>
+            <input type="file" id="videoInput" accept="video/*" aria-label="Choose a video">
+            <div class="form-row" style="margin-top:7px">
+                <button class="btn btn-primary" type="button" onclick="analyzeVideo()">🔍 Analyze Video</button>
+            </div>
+            <div id="videoResult" class="result" aria-live="polite"></div>
+        </article>
+
+        <!-- ========== PROTECT PHOTO ========== -->
+        <article class="card" id="photoCard">
+            <div class="card-head">
+                <div class="card-icon">🛡️</div>
+                <div class="card-title">
+                    <h2>Protect My Photo</h2>
+                    <p>Hide numbers, QR codes, IDs</p>
+                </div>
+            </div>
+            <input type="file" id="photoInput" accept="image/*" aria-label="Choose a photo to protect">
+            <div class="form-row" style="margin-top:7px">
+                <button class="btn btn-success" type="button" onclick="protectPhoto()">🛡️ Protect Photo</button>
+            </div>
+            <div id="photoResult" class="result" aria-live="polite"></div>
+        </article>
+
+        <!-- ========== ALREADY CLICKED ========== -->
+        <article class="card span-2" id="clickedCard">
+            <div class="card-head">
+                <div class="card-icon">😟</div>
+                <div class="card-title">
+                    <h2>Already Clicked?</h2>
+                    <p>Tick what happened and get next steps</p>
+                </div>
+            </div>
+
+            <div class="checks">
+                <label class="check"><input type="checkbox" id="c_otp"> I entered / shared an OTP</label>
+                <label class="check"><input type="checkbox" id="c_password"> I entered a password / PIN</label>
+                <label class="check"><input type="checkbox" id="c_downloaded"> I downloaded something</label>
+                <label class="check"><input type="checkbox" id="c_permissions"> I gave permissions</label>
+                <label class="check"><input type="checkbox" id="c_payment"> I made a payment</label>
+                <label class="check"><input type="checkbox" id="c_clicked"> I only opened the link</label>
+                <label class="check"><input type="checkbox" id="c_number"> I called / messaged the number</label>
+            </div>
+            <p style="color:var(--muted);font-size:11px;margin:5px 0 8px">Choose every situation that applies. ScamShield gives guidance; it cannot inspect or repair your device automatically.</p>
+
+            <div class="form-row">
+                <button class="btn btn-danger" type="button" onclick="clickedHelp()">🆘 Tell ScamShield</button>
+            </div>
+            <div id="clickedResult" class="result pre" aria-live="polite"></div>
+        </article>
+
+        <!-- ========== CUSTOMER CARE NUMBER ========== -->
+        <article class="card" id="phoneCard">
+            <div class="card-head">
+                <div class="card-icon">📞</div>
+                <div class="card-title">
+                    <h2>Check Customer Care Number</h2>
+                    <p>Is this number official?</p>
+                </div>
+            </div>
+            <div class="stack">
+                <input type="text" id="careName" aria-label="Bank or company name" placeholder="Bank / company name">
+                <input type="tel" id="careNumber" aria-label="Phone number" placeholder="Phone number">
+            </div>
+            <p style="color:var(--muted);font-size:11px;margin:6px 0 0">A format or pattern check cannot confirm who owns a number. Verify it through the organisation's official app or website.</p>
+            <div class="form-row" style="margin-top:7px">
+                <button class="btn btn-primary" type="button" onclick="checkNumber()">🔍 Check Number</button>
+            </div>
+            <div id="phoneResult" class="result" aria-live="polite"></div>
+        </article>
+
+        <!-- ========== REPORT SCAM ========== -->
+        <article class="card" id="reportCard">
+            <div class="card-head">
+                <div class="card-icon">🚨</div>
+                <div class="card-title">
+                    <h2>Report Scam</h2>
+                    <p>Lost money? Act fast</p>
+                </div>
+            </div>
+            <div class="report-actions">
+                <a class="btn btn-danger" href="tel:1930">📞 Call 1930</a>
+                <a class="btn btn-outline" href="https://cybercrime.gov.in" target="_blank" rel="noopener noreferrer">🌐 cybercrime.gov.in</a>
+            </div>
+            <p style="color:var(--muted);font-size:calc(var(--base-size)*.7);margin:8px 0 0;">
+                Report as early as possible. Use the Complaint Helper below to prepare your details.
+            </p>
+        </article>
+
+        <!-- ========== COMPLAINT HELPER ========== -->
+        <article class="card span-2" id="complaintCard">
+            <div class="card-head">
+                <div class="card-icon">📝</div>
+                <div class="card-title">
+                    <h2>Complaint Helper</h2>
+                    <p>Make a summary for 1930 / cybercrime.gov.in</p>
+                </div>
+            </div>
+            <form action="/report-summary" method="post" class="stack">
+                <div class="form-row">
+                    <input type="text" name="when" aria-label="When did it happen" placeholder="When did it happen?">
+                    <input type="text" name="channel" aria-label="How were you contacted" placeholder="Call / SMS / WhatsApp / link">
+                </div>
+                <div class="form-row">
+                    <input type="text" name="scammer_id" aria-label="Scammer phone, UPI or link" placeholder="Scammer phone / UPI ID / link">
+                    <input type="text" name="amount" aria-label="Amount lost" placeholder="Amount lost (INR)">
+                </div>
+                <div class="form-row">
+                    <input type="text" name="method" aria-label="Payment method" placeholder="UPI / card / bank transfer">
+                    <input type="text" name="bank" aria-label="Bank or wallet" placeholder="Bank / wallet used">
+                </div>
+                <input type="text" name="txn" aria-label="Transaction ID" placeholder="Transaction ID / UTR">
+                <textarea name="story" aria-label="What happened" placeholder="Tell what happened in your own words"></textarea>
+                <button class="btn btn-danger" type="submit">⬇️ Download Summary</button>
+            </form>
+        </article>
+
+    </section>
+
+    <section class="footer">
+        <div class="footer-card">
+            <h3>👍 Was this helpful?</h3>
+            <p id="feedbackText">Your answer helps us improve ScamShield.</p>
+            <div class="help-buttons">
+                <button class="btn btn-success" type="button" onclick="sendFeedback('yes')">👍 Yes</button>
+                <button class="btn btn-light" type="button" onclick="sendFeedback('no')">👎 No</button>
+            </div>
+        </div>
+
+        <div class="footer-card">
+            <h3>🔒 Privacy note</h3>
+            <p>
+                Photos and videos you upload are processed on this computer and deleted
+                automatically within about an hour. ScamShield never enters information
+                or submits anything on a website. Results are automatic checks and can be
+                wrong - always verify important requests through official channels.
+            </p>
+        </div>
+    </section>
+
+</main>
+
+<script>
+    /* ---------------------------------------------------------
+       LANGUAGE SETTINGS
+    --------------------------------------------------------- */
+
+    const LANGS = {
+        "en-IN": {
+            tip: "⚠️ Never share your OTP, PIN, CVV or password with anyone - not even the bank.",
+            followups: ["I clicked the link", "Is this a scam?", "What does this mean"],
+            listening: "Listening..."
+        },
+        "kn-IN": {
+            tip: "⚠️ ನಿಮ್ಮ OTP, PIN, CVV ಅಥವಾ ಪಾಸ್ವರ್ಡ್ ಅನ್ನು ಯಾರಿಗೂ ಹೇಳಬೇಡಿ - ಬ್ಯಾಂಕ್ ಸಿಬ್ಬಂದಿಗೂ ಸಹ ಅಲ್ಲ.",
+            followups: ["ನಾನು ಕ್ಲಿಕ್ ಮಾಡಿದೆ", "ಇದು ಮೋಸವೇ?", "ಇದರ ಅರ್ಥ ಏನು"],
+            listening: "ಕೇಳುತ್ತಿದ್ದೇನೆ..."
+        },
+        "te-IN": {
+            tip: "⚠️ మీ OTP, PIN, CVV లేదా పాస్వర్డ్ ను ఎవరికీ చెప్పకండి - బ్యాంక్ సిబ్బందికి కూడా కాదు.",
+            followups: ["నేను క్లిక్ చేశాను", "ఇది మోసం అవునా?", "దీని అర్థం ఏమిటి"],
+            listening: "వింటున్నాను..."
+        },
+        "hi-IN": {
+            tip: "⚠️ अपना OTP, PIN, CVV या पासवर्ड किसी को न बताएं - बैंक वालों को भी नहीं।",
+            followups: ["मैंने लिंक क्लिक किया", "क्या यह स्कैम है?", "इसका मतलब क्या है"],
+            listening: "सुन रहा हूं..."
+        }
+    };
+
+    let lastAnswer = "";
+
+    function currentLanguage() {
+        return document.getElementById("languageSelect").value;
+    }
+
+    function changeLanguage() {
+        const lang = currentLanguage();
+        document.documentElement.lang = lang.split("-")[0];
+        document.getElementById("tipBanner").textContent = LANGS[lang].tip;
+        renderFollowups();
+        try { localStorage.setItem("scamshield_lang", lang); } catch (e) {}
+    }
+
+    function renderFollowups() {
+        const box = document.getElementById("followups");
+        box.innerHTML = "";
+        LANGS[currentLanguage()].followups.forEach(function (phrase) {
+            const b = document.createElement("button");
+            b.type = "button";
+            b.className = "followup";
+            b.textContent = phrase;
+            b.onclick = function () {
+                document.getElementById("voiceText").value = phrase;
+                analyzeVoice();
+            };
+            box.appendChild(b);
+        });
+    }
+
+    function changeSize() {
+        const size = parseInt(document.getElementById("sizeSelect").value, 10);
+        document.documentElement.style.setProperty("--base-size", size + "px");
+        document.body.classList.toggle("large-text", size >= 30);
+        try { localStorage.setItem("scamshield_size", String(size)); } catch (e) {}
+    }
+
+    function goTo(id) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "center" });
+            const field = el.querySelector("input, textarea");
+            if (field) field.focus({ preventScroll: true });
+        }
+    }
+
+    /* ---------------------------------------------------------
+       WARNING SOUND (made in the browser, no outside file needed)
+    --------------------------------------------------------- */
+
+    function playScamAlert() {
+        try {
+            const Ctx = window.AudioContext || window.webkitAudioContext;
+            const ctx = new Ctx();
+            let t = ctx.currentTime;
+            for (let i = 0; i < 4; i++) {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = "square";
+                osc.frequency.value = i % 2 === 0 ? 880 : 660;
+                gain.gain.value = 0.08;
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(t);
+                osc.stop(t + 0.25);
+                t += 0.3;
+            }
+        } catch (e) {
+            console.log("Audio not available.");
+        }
+    }
+
+    /* ---------------------------------------------------------
+       GENERIC REQUEST HELPER
+    --------------------------------------------------------- */
+
+    function showLoading(box, text) {
+        box.classList.add("show");
+        box.innerHTML = '<span class="loading"><span class="spinner"></span> ' + text + "</span>";
+    }
+
+    async function send(url, formData, boxId, options) {
+        options = options || {};
+        const box = document.getElementById(boxId);
+        showLoading(box, options.loading || "Checking...");
+
+        try {
+            const response = await fetch(url, { method: "POST", body: formData });
+            const text = await response.text();
+
+            if (options.plain) {
+                box.textContent = text;
+            } else {
+                box.innerHTML = text;
+            }
+            box.classList.add("show");
+
+            if (!options.plain && document.getElementById("alertSound").checked &&
+                (text.indexOf("SCAMSHIELD ALERT") !== -1 || text.indexOf("HIGH RISK") !== -1)) {
+                playScamAlert();
+            }
+            return text;
+        } catch (error) {
+            box.textContent = "Something went wrong. Please check that ScamShield is running and try again.";
+            box.classList.add("show");
+            return "";
+        }
+    }
+
+    /* ---------------------------------------------------------
+       VOICE
+    --------------------------------------------------------- */
+
+    function startListening() {
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const result = document.getElementById("voiceResult");
+
+        if (!SR) {
+            result.classList.add("show");
+            result.textContent = "Voice input is not supported in this browser. Please type, or use Chrome or Edge.";
+            return;
+        }
+
+        const lang = currentLanguage();
+        const recognition = new SR();
+        recognition.lang = lang;
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        const button = document.getElementById("micButton");
+        const original = button.textContent;
+        button.textContent = "🎙️ " + LANGS[lang].listening;
+
+        recognition.onresult = function (event) {
+            document.getElementById("voiceText").value = event.results[0][0].transcript;
+            analyzeVoice();
+        };
+        recognition.onerror = function () {
+            result.classList.add("show");
+            result.textContent = "I could not hear you. Please try again or type.";
+        };
+        recognition.onend = function () {
+            button.textContent = original;
+        };
+
+        recognition.start();
+    }
+
+    async function analyzeVoice() {
+        const form = new FormData();
+        form.append("message", document.getElementById("voiceText").value);
+        form.append("language", currentLanguage());
+        lastAnswer = await send("/voice-answer", form, "voiceResult", { plain: true });
+        if (lastAnswer) speakAnswer();
+    }
+
+    function speakAnswer() {
+        if (!lastAnswer || !("speechSynthesis" in window)) return;
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(lastAnswer);
+        utterance.lang = currentLanguage();
+        utterance.rate = 0.9;
+        window.speechSynthesis.speak(utterance);
+    }
+
+    /* ---------------------------------------------------------
+       CHECKS
+    --------------------------------------------------------- */
+
+    function checkMessage() {
+        const text = document.getElementById("messageText").value.trim();
+        const box = document.getElementById("messageResult");
+        if (!text) {
+            box.classList.add("show");
+            box.textContent = "Please paste a message first.";
+            return;
+        }
+        const form = new FormData();
+        form.append("message", text);
+        send("/check-message", form, "messageResult");
+    }
+
+    function clearMessage() {
+        document.getElementById("messageText").value = "";
+        document.getElementById("messageResult").classList.remove("show");
+    }
+
+    function checkLink() {
+        const input = document.getElementById("linkInput");
+        const value = input.value.trim();
+        const box = document.getElementById("linkResult");
+        if (!value) {
+            box.classList.add("show");
+            box.textContent = "Please paste a website link first.";
+            input.focus();
+            return;
+        }
+        const form = new FormData();
+        form.append("link", value);
+        send("/analyze-link", form, "linkResult", { loading: "Inspecting URL parts and available website signals..." });
+    }
+
+    function sendFile(inputId, field, url, boxId, loading) {
+        const input = document.getElementById(inputId);
+        const box = document.getElementById(boxId);
+        if (!input.files || !input.files.length) {
+            box.classList.add("show");
+            box.textContent = "Please choose a file first.";
+            return;
+        }
+        const form = new FormData();
+        form.append(field, input.files[0]);
+        send(url, form, boxId, { loading: loading });
+    }
+
+    function analyzeImage() { sendFile("imageInput", "image", "/analyze-image", "imageResult", "Investigating visible text and QR codes..."); }
+
+    // Local preview only: this preview is not uploaded until Analyze Image is pressed.
+    document.getElementById("imageInput").addEventListener("change", function () {
+        const file = this.files && this.files[0];
+        const box = document.getElementById("imageLocalPreview");
+        box.innerHTML = "";
+        if (!file) { box.classList.remove("show"); return; }
+        if (!file.type.startsWith("image/")) {
+            box.textContent = "Please choose an image file.";
+            box.classList.add("show");
+            return;
+        }
+        const title = document.createElement("p");
+        title.textContent = "Preview before analysis: " + file.name;
+        const img = document.createElement("img");
+        img.alt = "Local preview of selected image";
+        img.style.maxHeight = "220px";
+        img.style.objectFit = "contain";
+        img.src = URL.createObjectURL(file);
+        img.onload = function () { URL.revokeObjectURL(img.src); };
+        box.appendChild(title);
+        box.appendChild(img);
+        box.classList.add("show");
+    });
+    function analyzeVideo() { sendFile("videoInput", "video", "/analyze-video", "videoResult", "Analyzing the video. This can take a minute..."); }
+    function protectPhoto() { sendFile("photoInput", "photo", "/protect-photo", "photoResult", "Protecting the photo..."); }
+
+    function clickedHelp() {
+        const form = new FormData();
+        ["otp", "password", "downloaded", "permissions", "payment", "clicked", "number"].forEach(function (name) {
+            form.append(name, document.getElementById("c_" + name).checked ? "yes" : "no");
+        });
+        // The server returns formatted HTML guidance, so do not render it as plain text.
+        send("/clicked-help", form, "clickedResult", { loading: "Preparing your next steps..." });
+    }
+
+    function checkNumber() {
+        const form = new FormData();
+        form.append("name", document.getElementById("careName").value);
+        form.append("number", document.getElementById("careNumber").value);
+        send("/check-number", form, "phoneResult");
+    }
+
+    async function sendFeedback(value) {
+        const form = new FormData();
+        form.append("helpful", value);
+        const label = document.getElementById("feedbackText");
+        try {
+            const response = await fetch("/feedback", { method: "POST", body: form });
+            label.textContent = await response.text();
+        } catch (e) {
+            label.textContent = "Could not send feedback.";
+        }
+    }
+
+    /* ---------------------------------------------------------
+       START
+    --------------------------------------------------------- */
+
+    (function init() {
+        try {
+            const lang = localStorage.getItem("scamshield_lang");
+            const size = localStorage.getItem("scamshield_size");
+            if (lang && LANGS[lang]) document.getElementById("languageSelect").value = lang;
+            if (size) document.getElementById("sizeSelect").value = size;
+        } catch (e) {}
+        changeLanguage();
+        changeSize();
+    })();
+</script>
+
+</body>
+</html>
